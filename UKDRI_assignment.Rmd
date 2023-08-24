@@ -40,18 +40,18 @@ This dataset has been simulated with the following narrative in mind: A clinical
 
 ##### Variables and distributions
 Age: The age of the participants at the beginning of the trial. Normally distributed with a mean of 70 years and a standard deviation of 5 years.
-\\
+\
 Sex: The sex of the participants (0 for male, 1 for female). Randomly assigned with a 60% probability of being male (0) and a 40% probability of being female (1).
-\\
+\
 Group: Randomly assigned with a 70% probability of being in Group A (no dietary restrictions) and a 30% probability of being in Group B (gluten intolerant).
-\\
+\
 Baseline_Cognitive_Score: The baseline cognitive score of the participants measured using a standardized test. An example could be an MMSE score. Normally distributed with a mean of 50 and a standard deviation of 10.
-\\
+\
 Treatment_Duration: The duration of the experimental treatment in weeks. Discrete distribution with higher probability density between 24 and 48 weeks.
-\\
+\
 Treatment_Response: A multivariate indicator of treatment response, influenced by sex, treatment duration, and baseline cognitive score. A binary indicator (0 or 1) determined by sex, treatment duration, and baseline cognitive score using a logistic regression-like formula:
 Treatment_Response = sigmoid(-1 + 0.1 * Sex + 0.01 * Treatment_Duration + 0.05 * Baseline_Cognitive_Score)
-\\
+\
 For males in Group B, the probability of treatment response is increased by 0.5 compared to the baseline response probability, reflecting the enhanced treatment effect for this subgroup.
 
 ```{r initial, }
@@ -112,20 +112,21 @@ for (i in seq_along(results)) {
   print(results[[i]])
 }
 ```
+
 In Group A, the p-value is 0.6474, which indicates that there was no statistically significant difference in treatment responses between males and females in Group A. The odds ratio of 0.8939409 suggests that the odds of treatment response are slightly lower in Group A compared to the reference group (males), but this difference is not statistically significant. The 95% confidence interval includes 1, further indicating that the difference is not statistically significant.
-\\
+\
 In Group B, the p-value is 0.02788, which is below the typical threshold of 0.05 for statistical significance. This suggests that there is a statistically significant difference in treatment responses between males and females in Group B. The odds ratio of 0.4480901 indicates that the odds of treatment response are significantly lower for females in Group B compared to the reference group (males). The 95% confidence interval does not include 1, supporting the statistical significance of the result.
-\\
+\
 In summary, the interpretation suggests that while there is no significant difference in treatment responses between males and females in the cohort of individuals with no dietary restrictions, but there is a statistically significant difference in treatment responses between males and females in the gluten-intolerant cohort. The treatment response odds for females in Group B are significantly lower compared to males. 
-\\
+\
 This could be indicative that a given diet renders a treatment more effective for gluten intolerant males. This is not necessarily a reason to prescribe a gluten free diet to improve efficacy, there could also be a biological foundation of gluten-intolerance that drives the response in treatment. Further analyses could be performed to evaluate this. 
+
 
 ## Visualizations
 
 ### Correlation heatmap
 We created a scatter plot matrix to visualize the relationships between pairs of variables. 
 Each cell of the matrix contains a scatter plot for a pair of variables. The color of the points in each plot corresponds to the "Group" variable. This matrix will help you visually explore the relationships between age, baseline cognitive score, treatment duration, and treatment response, while considering the different groups.
-[I used the `dba.plotHeatmap()` function; 1 line]
 ```{r visualize, fig.height=6 }
 # Convert Group variable to numeric for color mapping
 simulated_data$Group_numeric <- as.numeric(factor(simulated_data$Group))
@@ -140,14 +141,15 @@ ggplot(simulated_data, aes(x = Age, y = Baseline_Cognitive_Score, color = Group)
 
 
 ### PCA
-The above scatter plot appears to be hard to interpret. Instead, we could perform a PCA and color points according to data features. 
-```{r peaks_clustering_pca, }
+The above scatter plot appears to be hard to interpret. Instead, we could perform a PCA and color points according to data features. You could color points by sex, age, response to treatment, etc. I was unable to complete this due to time limitations. 
+```{r pca, }
 
 # Select the variables for PCA
 variables_for_pca <- simulated_data %>%
   select(Age, Sex, Baseline_Cognitive_Score, Treatment_Duration, Treatment_Response)
 
 # Perform PCA
-pca_result <- PCA(variables_for_pca, graph = TRUE)
+pca_result <- PCA(variables_for_pca, graph = FALSE)
+plot(pca_result, label="none")
 ```
 
